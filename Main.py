@@ -26,15 +26,20 @@ pamitka = '''Цель игры дойти до выхода и выжить
     D - вправо,           E - выход
     H - помощь'''
 
-menu_txt = """
- ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
+pamitka_menu = 'Управление: w - вверх,  s - вниз, e - выбор'
+
+version = 'alfa 1.0v'
+
+menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
  ██║ ████╗ ██║ ██╔════╝ ██╔══██╗       ██╔════╝  ██╔══██╗ ████╗ ████║ ██╔════╝
  ██║ ██╔██╗██║ █████╗   ██║  ██║       ██║  ██╗  ███████║ ██╔████╔██║ █████╗
  ██║ ██║╚████║ ██╔══╝   ██║  ██║       ██║  ╚██╗ ██╔══██║ ██║╚██╔╝██║ ██╔══╝
  ██║ ██║ ╚███║ ██║      ╚█████╔╝       ╚██████╔╝ ██║  ██║ ██║ ╚═╝ ██║ ███████╗
- ╚═╝ ╚═╝  ╚══╝ ╚═╝       ╚════╝         ╚═════╝  ╚═╝  ╚═╝ ╚═╝     ╚═╝ ╚══════╝
-"""
-print(menu_txt)
+ ╚═╝ ╚═╝  ╚══╝ ╚═╝       ╚════╝         ╚═════╝  ╚═╝  ╚═╝ ╚═╝     ╚═╝ ╚══════╝"""
+
+menu_yacheiki = ['1. Играть', '2. Настройки', '3. Выход']
+
+
 
 class Essence:
     def __init__(self, hp, attack):
@@ -54,11 +59,85 @@ class Maping:
 
 
 
-all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1)]
+all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1), Maping('Назад в меню', 0, 0, 0)]
+
+
+def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
+    os.system('cls')
+    print(menu_txt, '\n', version)
+    print(pamitka_menu)
+    print()
+    chet = 0
+    if len(yvedomlenie) != 0:
+        new_yvedomlenie = []
+        for i in yvedomlenie:
+            if i[1] > 0:
+                i[1] -= 1
+                print(i[0], end='\n')
+                new_yvedomlenie.append(i)
+        yvedomlenie = new_yvedomlenie
+
+    if vivod_chego == 0:
+        for i in menu_yacheiki:
+            if chet == yacheika:
+                print(f'{i} <')
+            else:
+                print(i)
+            chet += 1
+    elif vivod_chego == 1:
+        for i in all_maps:
+            if chet == yacheika:
+                print(f'{i.name} <')
+            else:
+                print(i.name)
+            chet += 1
 
 
 def menu():
-    pass
+    yvedomlenie = []
+    yacheika = 0
+    vivod_menu(yacheika, yvedomlenie)
+    while True:
+        destvia = input().lower()
+        if destvia == 'w':
+            yacheika -= 1
+            if yacheika < 0:
+                yacheika = len(all_maps) - 1
+        elif destvia == 's':
+            yacheika += 1
+            if yacheika > len(all_maps) - 1:
+                yacheika = 0
+        else:
+            if yacheika == 0:
+                yacheika = 0
+            elif yacheika == 1:
+                yvedomlenie.append(['Скоро появится', 3])
+            else:
+                break
+
+        vivod_menu(yacheika, yvedomlenie)
+
+
+def menu_yrav():
+    yvedomlenie = []
+    yacheika = 0
+    vivod_menu(yacheika, yvedomlenie, 1)
+    while True:
+        destvia = input().lower()
+        if destvia == 'w':
+            yacheika -= 1
+            if yacheika < 0:
+                yacheika = len(menu_yacheiki) - 1
+        elif destvia == 's':
+            yacheika += 1
+            if yacheika > len(menu_yacheiki) - 1:
+                yacheika = 0
+        else:
+            if yacheika == 0:
+                yacheika = 0
+            else:
+                menu()
+    vivod_menu(yacheika, yvedomlenie, 1)
 
 
 def vivod_map(pamitkas, maps, yvedomlenie=[]):
@@ -130,4 +209,4 @@ def map_play(map):
         vivod_map(pamitkas, map.map, yvedomlenie)
 
 
-map_play(maps)
+menu()
