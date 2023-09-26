@@ -1,22 +1,10 @@
 import os, copy
 
-map1 = [
-    ["*", "*", "*"],
-    ["*", "G", "*"],
-    ["*", " ", "*"],
-    ["*", " ", "*", "*", "*", "*"],
-    ["*", " ", " ", " ", "K", "*"],
-    ["*", " ", "*", "*", "*", "*"],
-    ["*", " ", "*"],
-    ["*", "D", "*"],
-    ["*", "E", "*"]]
+map1 = [["*", "*", "*"], ["*", "G", "*"], ["*", " ", "*"], ["*", " ", "*", "*", "*", "*"], ["*", " ", " ", " ", "K", "*"],
+["*", " ", "*", "*", "*", "*"], ["*", " ", "*"], ["*", "D", "*"], ["*", "E", "*"]]
 
-map_test = [
-    ['*', '*', '*', '*', '*'],
-    ['*', 'D', 'K', ' ', '*'],
-    ['*', ' ', 'G', ' ', '*'],
-    ['*', ' ', ' ', ' ', '*'],
-    ['*', 'E', '*', '*', '*'],]
+map_test = [['*', '*', '*', '*', '*'], ['*', 'D', 'K', ' ', '*'], ['*', ' ', 'G', ' ', '*'], ['*', ' ', ' ', ' ', '*'],
+['*', 'E', '*', '*', '*'],]
 
 pamitka = '''Цель игры дойти до выхода и выжить
 Управление:           Легенда карты: 
@@ -28,8 +16,6 @@ pamitka = '''Цель игры дойти до выхода и выжить
 
 pamitka_menu = 'Управление: w - вверх,  s - вниз, e - выбор'
 
-version = 'pre_alfa_test 1.0v'
-
 menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
  ██║ ████╗ ██║ ██╔════╝ ██╔══██╗       ██╔════╝  ██╔══██╗ ████╗ ████║ ██╔════╝
  ██║ ██╔██╗██║ █████╗   ██║  ██║       ██║  ██╗  ███████║ ██╔████╔██║ █████╗
@@ -39,6 +25,7 @@ menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █�
 
 menu_yacheiki = ['1. Играть', '2. Настройки', '3. Выход']
 
+version = 'pre_alfa_test 1.0v'
 
 
 class Essence:
@@ -48,7 +35,6 @@ class Essence:
         self.inventory = {}
 
 
-
 class Maping:
     def __init__(self, name, map, x, y):
         self.name = name
@@ -56,7 +42,6 @@ class Maping:
         self.x = x
         self.y = y
         self.kluch = 0
-
 
 
 all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1)]
@@ -98,6 +83,7 @@ def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
                     print(f'{chet + 1}. {i.name}')
             chet += 1
         all_maps.pop()
+    print(yacheika)
 
 
 def menu():
@@ -107,11 +93,11 @@ def menu():
     vivod_menu(yacheika, yvedomlenie)
     while True:
         destvia = input().lower()
-        if destvia == 'w':
+        if destvia == 'w' or destvia == 'ц':
             yacheika -= 1
             if yacheika < 0:
                 yacheika = len(all_maps)
-        elif destvia == 's':
+        elif destvia == 's' or destvia == 'ы':
             yacheika += 1
             if yacheika > len(all_maps):
                 yacheika = 0
@@ -161,49 +147,52 @@ def map_play(map):
 
     while True:
         destvia = input().lower()
-        star_x, star_y = x, y
+        new_x, new_y = x, y
         pamitkas = 0
 
         if destvia == 'd':
-            x += 1
+            new_x += 1
         elif destvia == 'a':
-            x -= 1
+            new_x -= 1
         elif destvia == 'w':
-            y -= 1
+            new_y -= 1
         elif destvia == 's':
-            y +=  1
+            new_y +=  1
         elif destvia == 'h':
             pamitkas = 1
+        else:
+            yvedomlenie.append([f'Нет такого действия: {destvia}', 2])
 
-        if map_cash[y][x] == ' ':
-            map_cash[y][x] = 'G'
-            map_cash[star_y][star_x] = ' '
-        elif map_cash[y][x] == 'D':
+        if map_cash[new_y][new_x] == ' ': # emptiness
+            map_cash[new_y][new_x] = 'G'
+            map_cash[y][x] = ' '
+            x, y = new_x, new_y
+        elif map_cash[new_y][new_x] == 'D': # door
             if kluch_cash > 0:
-                map_cash[y][x] = 'G'
-                map_cash[star_y][star_x] = ' '
+                map_cash[new_y][new_x] = 'G'
+                map_cash[y][x] = ' '
+                x, y = new_x, new_y
                 yvedomlenie.append(['Вы открыли дверь', 3])
                 kluch_cash -= 1
             elif kluch_cash == 0:
                 yvedomlenie.append(['Чтобы открыть дверь надо подобрать ключ', 3])
-        elif map_cash[y][x] == 'K' or map.map[y][x] == 'К':
-            map_cash[y][x] = 'G'
-            map_cash[star_y][star_x] = ' '
+        elif map_cash[new_y][new_x] == 'K' or map.map[new_y][new_x] == 'К': # key
+            map_cash[new_y][new_x] = 'G'
+            map_cash[y][x] = ' '
+            x, y = new_x, new_y
             kluch_cash += 1
             yvedomlenie.append(['Вы подобрали ключ!', 3])
-        elif map_cash[y][x] == 'E':
+        elif map_cash[new_y][new_x] == 'E': # exit
             os.system('cls')
             print('You win!')
             print(map)
             break
-        elif map_cash[y][x] == 'G':
-            map_cash[y][x] = 'G'
-            map_cash[star_y][star_x] = ' '
-        elif map_cash[y][x] == '*':
-            x, y = star_x, star_y
-        else:
-            yvedomlenie.append([f'Нет такого действия: {destvia}', 2])
-            x, y = star_x, star_y
+        elif map_cash[new_y][new_x] == 'G': # main character
+            map_cash[new_y][new_x] = 'G'
+            map_cash[y][x] = ' '
+            x, y = new_x, new_y
+        elif map_cash[new_y][new_x] == '*': # wall
+            yvedomlenie.append(['Вы уперлись в стену!', 3])
 
         vivod_map(pamitkas, map_cash, yvedomlenie)
 
