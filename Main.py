@@ -1,4 +1,4 @@
-import os
+import os, copy
 
 map1 = [
     ["*", "*", "*"],
@@ -28,7 +28,7 @@ pamitka = '''Цель игры дойти до выхода и выжить
 
 pamitka_menu = 'Управление: w - вверх,  s - вниз, e - выбор'
 
-version = 'alfa 1.0v'
+version = 'pre_alfa_test 1.0v'
 
 menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
  ██║ ████╗ ██║ ██╔════╝ ██╔══██╗       ██╔════╝  ██╔══██╗ ████╗ ████║ ██╔════╝
@@ -59,14 +59,13 @@ class Maping:
 
 
 
-all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1), Maping('Назад в меню', 0, 0, 0)]
+all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1)]
 
 
 def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
     os.system('cls')
     print(menu_txt, '\n', version)
     print(pamitka_menu)
-    print()
     chet = 0
     if len(yvedomlenie) != 0:
         new_yvedomlenie = []
@@ -85,59 +84,52 @@ def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
                 print(i)
             chet += 1
     elif vivod_chego == 1:
+        all_maps.append('Назад в меню')
         for i in all_maps:
             if chet == yacheika:
-                print(f'{i.name} <')
+                if i == 'Назад в меню':
+                    print(f'{chet + 1}. {i} <')
+                else:
+                    print(f'{chet + 1}. {i.name} <')
             else:
-                print(i.name)
+                if i == 'Назад в меню':
+                    print(f'{chet + 1}. {i}')
+                else:
+                    print(f'{chet + 1}. {i.name}')
             chet += 1
+        all_maps.pop()
 
 
 def menu():
     yvedomlenie = []
     yacheika = 0
+    menu_maps = 0
     vivod_menu(yacheika, yvedomlenie)
     while True:
         destvia = input().lower()
         if destvia == 'w':
             yacheika -= 1
             if yacheika < 0:
-                yacheika = len(all_maps) - 1
+                yacheika = len(all_maps)
         elif destvia == 's':
             yacheika += 1
-            if yacheika > len(all_maps) - 1:
+            if yacheika > len(all_maps):
                 yacheika = 0
         else:
-            if yacheika == 0:
-                yacheika = 0
-            elif yacheika == 1:
-                yvedomlenie.append(['Скоро появится', 3])
-            else:
-                break
+            if menu_maps == 0:
+                if yacheika == 0:
+                    menu_maps = 1
+                elif yacheika == 1:
+                    yvedomlenie.append(['Скоро появится', 3])
+                else:
+                    break
+            elif menu_maps == 1:
+                if yacheika == len(all_maps):
+                    menu()
+                else:
+                    map_play(all_maps[yacheika])
 
-        vivod_menu(yacheika, yvedomlenie)
-
-
-def menu_yrav():
-    yvedomlenie = []
-    yacheika = 0
-    vivod_menu(yacheika, yvedomlenie, 1)
-    while True:
-        destvia = input().lower()
-        if destvia == 'w':
-            yacheika -= 1
-            if yacheika < 0:
-                yacheika = len(menu_yacheiki) - 1
-        elif destvia == 's':
-            yacheika += 1
-            if yacheika > len(menu_yacheiki) - 1:
-                yacheika = 0
-        else:
-            if yacheika == 0:
-                yacheika = 0
-            else:
-                menu()
-    vivod_menu(yacheika, yvedomlenie, 1)
+        vivod_menu(yacheika, yvedomlenie, menu_maps)
 
 
 def vivod_map(pamitkas, maps, yvedomlenie=[]):
@@ -164,6 +156,8 @@ def map_play(map):
     x, y = map.x, map.y
     vivod_map(1, map.map)
     yvedomlenie = []
+    map_cash = copy.copy(map.map)
+    kluch_cash = copy.copy(map.kluch)
 
     while True:
         destvia = input().lower()
@@ -181,32 +175,37 @@ def map_play(map):
         elif destvia == 'h':
             pamitkas = 1
 
-        if map.map[y][x] == ' ':
-            map.map[y][x] = 'G'
-            map.map[star_y][star_x] = ' '
-        elif map.map[y][x] == 'D':
-            if map.kluch == 1:
-                map.map[y][x] = 'G'
-                map.map[star_y][star_x] = ' '
+        if map_cash[y][x] == ' ':
+            map_cash[y][x] = 'G'
+            map_cash[star_y][star_x] = ' '
+        elif map_cash[y][x] == 'D':
+            if kluch_cash > 0:
+                map_cash[y][x] = 'G'
+                map_cash[star_y][star_x] = ' '
                 yvedomlenie.append(['Вы открыли дверь', 3])
-            elif map.kluch == 0:
+                kluch_cash -= 1
+            elif kluch_cash == 0:
                 yvedomlenie.append(['Чтобы открыть дверь надо подобрать ключ', 3])
-        elif map.map[y][x] == 'K' or map.map[y][x] == 'К':
-            map.map[y][x] = 'G'
-            map.map[star_y][star_x] = ' '
-            map.kluch = 1
+        elif map_cash[y][x] == 'K' or map.map[y][x] == 'К':
+            map_cash[y][x] = 'G'
+            map_cash[star_y][star_x] = ' '
+            kluch_cash += 1
             yvedomlenie.append(['Вы подобрали ключ!', 3])
-        elif map.map[y][x] == 'E':
+        elif map_cash[y][x] == 'E':
             os.system('cls')
             print('You win!')
+            print(map)
             break
-        elif map.map[y][x] == '*':
+        elif map_cash[y][x] == 'G':
+            map_cash[y][x] = 'G'
+            map_cash[star_y][star_x] = ' '
+        elif map_cash[y][x] == '*':
             x, y = star_x, star_y
         else:
             yvedomlenie.append([f'Нет такого действия: {destvia}', 2])
             x, y = star_x, star_y
 
-        vivod_map(pamitkas, map.map, yvedomlenie)
+        vivod_map(pamitkas, map_cash, yvedomlenie)
 
 
 menu()
