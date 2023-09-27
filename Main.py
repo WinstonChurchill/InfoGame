@@ -3,6 +3,27 @@ import os, copy
 map1 = [["*", "*", "*"], ["*", "G", "*"], ["*", " ", "*"], ["*", " ", "*", "*", "*", "*"], ["*", " ", " ", " ", "K", "*"],
 ["*", " ", "*", "*", "*", "*"], ["*", " ", "*"], ["*", "D", "*"], ["*", "E", "*"]]
 
+map2 = [['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'],
+        ['*', 'G', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', 'K', '*'],
+        ['*', ' ', '*', '*', '*', '*', '*', ' ', '*', '*', ' ', '*', ' ', '*', '*', '*', ' ', '*', ' ', '*'],
+        ['*', ' ', ' ', '*', 'K', '*', '*', 'D', '*', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*'],
+        ['*', '*', ' ', '*', ' ', ' ', '*', ' ', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', ' ', '*'],
+        ['*', ' ', ' ', '*', '*', ' ', '*', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*'],
+        ['*', ' ', '*', '*', ' ', ' ', '*', '*', ' ', '*', '*', '*', ' ', '*', '*', 'D', '*', ' ', '*', '*'],
+        ['*', ' ', '*', ' ', ' ', '*', '*', '*', ' ', ' ', ' ', '*', ' ', '*', 'K', ' ', '*', ' ', '*', '*'],
+        ['*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*', ' ', '*', '*', '*', ' ', ' ', '*', '*'],
+        ['*', ' ', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', ' ', '*', '*', ' ', ' ', '*', 'K', '*'],
+        ['*', ' ', '*', 'K', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', '*', ' ', '*', '*', ' ', '*'],
+        ['*', ' ', ' ', ' ', '*', ' ', '*', '*', '*', 'D', '*', '*', '*', '*', '*', ' ', '*', ' ', ' ', '*'],
+        ['*', '*', '*', 'D', '*', ' ', '*', 'K', '*', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*', '*', ' ', '*'],
+        ['*', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*'],
+        ['*', ' ', ' ', ' ', ' ', ' ', '*', ' ', '*', ' ', '*', '*', '*', ' ', '*', '*', '*', '*', ' ', '*'],
+        ['*', '*', ' ', '*', '*', '*', '*', ' ', '*', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', '*', ' ', '*'],
+        ['*', ' ', ' ', '*', ' ', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', ' ', ' ', ' ', '*', ' ', '*'],
+        ['*', ' ', '*', '*', '*', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', '*', ' ', '*', '*', '*', '*'],
+        ['*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', '*'],
+        ['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', 'E', '*']]
+
 map_test = [['*', '*', '*', '*', '*'], ['*', 'D', 'K', ' ', '*'], ['*', ' ', 'G', ' ', '*'], ['*', ' ', ' ', ' ', '*'],
 ['*', 'E', '*', '*', '*'],]
 
@@ -12,7 +33,8 @@ pamitka = '''Цель игры дойти до выхода и выжить
     A - влево,            K - ключ,
     S - вниз,             D - дверь,
     D - вправо,           E - выход
-    H - помощь'''
+    H - помощь
+    Q - выход в меню'''
 
 pamitka_menu = 'Управление: w - вверх,  s - вниз, e - выбор'
 
@@ -25,7 +47,7 @@ menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █�
 
 menu_yacheiki = ['1. Играть', '2. Настройки', '3. Выход']
 
-version = 'pre_alfa_test 1.0v'
+version = 'pre_alfa_test 1.0v New: -'
 
 
 class Essence:
@@ -44,7 +66,7 @@ class Maping:
         self.kluch = 0
 
 
-all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1)]
+all_maps = [Maping('Тестовая карта', map_test, 2, 2), Maping('Уровень 1', map1, 1, 1), Maping('Уровень 2', map2, 1, 1)]
 
 
 def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
@@ -83,7 +105,6 @@ def vivod_menu(yacheika, yvedomlenie=[], vivod_chego=0):
                     print(f'{chet + 1}. {i.name}')
             chet += 1
         all_maps.pop()
-    print(yacheika)
 
 
 def menu():
@@ -105,23 +126,23 @@ def menu():
             if menu_maps == 0:
                 if yacheika == 0:
                     menu_maps = 1
+                    yacheika = 0
                 elif yacheika == 1:
                     yvedomlenie.append(['Скоро появится', 3])
                 else:
                     break
             elif menu_maps == 1:
                 if yacheika == len(all_maps):
-                    menu()
+                    menu_maps = 0
+                    yacheika = 0
                 else:
                     map_play(all_maps[yacheika])
 
         vivod_menu(yacheika, yvedomlenie, menu_maps)
 
 
-def vivod_map(pamitkas, maps, yvedomlenie=[]):
+def vivod_map(maps, yvedomlenie=[]):
     os.system('cls')
-    if pamitkas:
-        print(pamitka, end='\n')
 
     if len(yvedomlenie) != 0:
         new_yvedomlenie = []
@@ -140,15 +161,14 @@ def vivod_map(pamitkas, maps, yvedomlenie=[]):
 
 def map_play(map):
     x, y = map.x, map.y
-    vivod_map(1, map.map)
-    yvedomlenie = []
-    map_cash = copy.copy(map.map)
-    kluch_cash = copy.copy(map.kluch)
+    yvedomlenie = [[pamitka, 3]]
+    vivod_map(map.map, yvedomlenie)
+    map_cash = copy.deepcopy(map.map)
+    kluch_cash = copy.deepcopy(map.kluch)
 
     while True:
         destvia = input().lower()
         new_x, new_y = x, y
-        pamitkas = 0
 
         if destvia == 'd':
             new_x += 1
@@ -159,7 +179,9 @@ def map_play(map):
         elif destvia == 's':
             new_y +=  1
         elif destvia == 'h':
-            pamitkas = 1
+            yvedomlenie = [[pamitka, 3]]
+        elif destvia == 'q':
+            break
         else:
             yvedomlenie.append([f'Нет такого действия: {destvia}', 2])
 
@@ -184,17 +206,10 @@ def map_play(map):
             yvedomlenie.append(['Вы подобрали ключ!', 3])
         elif map_cash[new_y][new_x] == 'E': # exit
             os.system('cls')
-            print('You win!')
-            print(map)
             break
-        elif map_cash[new_y][new_x] == 'G': # main character
-            map_cash[new_y][new_x] = 'G'
-            map_cash[y][x] = ' '
-            x, y = new_x, new_y
         elif map_cash[new_y][new_x] == '*': # wall
             yvedomlenie.append(['Вы уперлись в стену!', 3])
 
-        vivod_map(pamitkas, map_cash, yvedomlenie)
-
+        vivod_map(map_cash, yvedomlenie)
 
 menu()
