@@ -1,6 +1,6 @@
 import os, copy
 
-map1 = [["*", "*", "*"], ["*", "G", "*"], ["*", " ", "*"], ["*", " ", "*", "*", "*", "*"], ["*", " ", " ", " ", "K", "*"],
+map1 = [["*", "*", "*"], ["*", "G", "*"], ["*", " ", "*"], ["*", " ", "*"], ["*", " ", "*", "*", "*", "*"], ["*", " ", " ", " ", "K", "*"],
 ["*", " ", "*", "*", "*", "*"], ["*", " ", "*"], ["*", "D", "*"], ["*", "E", "*"]]
 
 map2 = [['*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*', '*'],
@@ -38,7 +38,8 @@ pamitka = '''Цель игры дойти до выхода и выжить
 
 pamitka_menu = 'Управление: w - вверх,  s - вниз, e - выбор'
 
-menu_txt = """ ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
+menu_txt = """ 
+ ██╗ ███╗  ██╗ ███████╗  █████╗          ██████╗  █████╗  ███╗   ███╗ ███████╗
  ██║ ████╗ ██║ ██╔════╝ ██╔══██╗       ██╔════╝  ██╔══██╗ ████╗ ████║ ██╔════╝
  ██║ ██╔██╗██║ █████╗   ██║  ██║       ██║  ██╗  ███████║ ██╔████╔██║ █████╗
  ██║ ██║╚████║ ██╔══╝   ██║  ██║       ██║  ╚██╗ ██╔══██║ ██║╚██╔╝██║ ██╔══╝
@@ -122,6 +123,8 @@ def menu():
             yacheika += 1
             if yacheika > len(all_maps):
                 yacheika = 0
+            elif yacheika > len(all_maps) - 1 and not(menu_maps):
+                yacheika = 0
         else:
             if menu_maps == 0:
                 if yacheika == 0:
@@ -143,6 +146,7 @@ def menu():
 
 def vivod_map(maps, yvedomlenie=[]):
     os.system('cls')
+    maps_cash_obrabotka = maps
 
     if len(yvedomlenie) != 0:
         new_yvedomlenie = []
@@ -153,9 +157,9 @@ def vivod_map(maps, yvedomlenie=[]):
                 new_yvedomlenie.append(i)
         yvedomlenie = new_yvedomlenie
 
-    for i in maps:
-        for x in i:
-            print(x, end='')
+    for i in maps_cash_obrabotka:
+        for xx in i:
+            print(xx, end='')
         print(end='\n')
 
 
@@ -170,17 +174,17 @@ def map_play(map):
         destvia = input().lower()
         new_x, new_y = x, y
 
-        if destvia == 'd':
+        if destvia == 'd' or destvia == 'в':
             new_x += 1
-        elif destvia == 'a':
+        elif destvia == 'a'or destvia == 'ф':
             new_x -= 1
-        elif destvia == 'w':
+        elif destvia == 'w' or destvia == 'ц':
             new_y -= 1
-        elif destvia == 's':
+        elif destvia == 's' or destvia == 'ы':
             new_y +=  1
-        elif destvia == 'h':
+        elif destvia == 'h' or destvia == 'р':
             yvedomlenie = [[pamitka, 3]]
-        elif destvia == 'q':
+        elif destvia == 'q' or destvia == 'й':
             break
         else:
             yvedomlenie.append([f'Нет такого действия: {destvia}', 2])
